@@ -23,4 +23,8 @@ pnpm run db:push
 
 # Start dev server
 pnpm start
+
+# Testing
+pnpm test
+pnpm test:watch
 ```
