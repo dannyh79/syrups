@@ -34,3 +34,13 @@ model Session {
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
+
+model Employee {
+  id        String  @id @default(cuid())
+  lastName  String?
+  firstName String
+  role      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
