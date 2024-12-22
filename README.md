@@ -17,6 +17,10 @@ asdf install
 # Install project dependencies
 pnpm install
 
+# Set up database
+pnpm run db:generate
+pnpm run db:push
+
 # Start dev server
 pnpm start
 ```
