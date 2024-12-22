@@ -1,17 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Prereqs
+
+- [asdf](https://asdf-vm.com/guide/getting-started.html): v0.14.1 tested; runtime manager (optional)
+- [Node](https://nodejs.org/en/download/package-manager): v22.9.0; JavaScript runtime
+- [PNPM](https://pnpm.io/installation): v9.12.1; Package manager
+
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Optional; skip if nodejs and pnpm are installed via other ways
+asdf install
+
+# Install project dependencies
+pnpm install
+
+# Start dev server
+pnpm start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
