@@ -1,4 +1,5 @@
 {
   "*.{cjs,js,mjs,ts,tsx}": "tsc --noEmit",
-  "*.{cjs,js,mjs,ts,tsx}": "next lint --fix --max-warnings 0"
+  "*.{cjs,js,mjs,ts,tsx}": "next lint --fix --max-warnings 0",
+  "*.{cjs,json,md,mjs,ts,tsx}": "prettier -w"
 }
