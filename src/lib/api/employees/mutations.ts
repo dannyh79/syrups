@@ -1,15 +1,8 @@
 import { db } from '@/lib/db/index';
-import {
-  EmployeeId,
-  NewEmployeeParams,
-  UpdateEmployeeParams,
-  updateEmployeeSchema,
-  insertEmployeeSchema,
-  employeeIdSchema,
-} from '@/lib/db/schema/employees';
+import * as schema from '@/lib/db/schema/employees';
 
-export const createEmployee = async (employee: NewEmployeeParams) => {
-  const newEmployee = insertEmployeeSchema.parse(employee);
+export const createEmployee = async (employee: schema.NewEmployeeParams) => {
+  const newEmployee = schema.insertEmployeeSchema.parse(employee);
   try {
     const e = await db.employee.create({ data: newEmployee });
     return { employee: e };
@@ -20,9 +13,12 @@ export const createEmployee = async (employee: NewEmployeeParams) => {
   }
 };
 
-export const updateEmployee = async (id: EmployeeId, employee: UpdateEmployeeParams) => {
-  const { id: employeeId } = employeeIdSchema.parse({ id });
-  const newEmployee = updateEmployeeSchema.parse(employee);
+export const updateEmployee = async (
+  id: schema.EmployeeId,
+  employee: schema.UpdateEmployeeParams,
+) => {
+  const { id: employeeId } = schema.employeeIdSchema.parse({ id });
+  const newEmployee = schema.updateEmployeeSchema.parse(employee);
   try {
     const e = await db.employee.update({ where: { id: employeeId }, data: newEmployee });
     return { employee: e };
@@ -33,8 +29,8 @@ export const updateEmployee = async (id: EmployeeId, employee: UpdateEmployeePar
   }
 };
 
-export const deleteEmployee = async (id: EmployeeId) => {
-  const { id: employeeId } = employeeIdSchema.parse({ id });
+export const deleteEmployee = async (id: schema.EmployeeId) => {
+  const { id: employeeId } = schema.employeeIdSchema.parse({ id });
   try {
     const e = await db.employee.delete({ where: { id: employeeId } });
     return { employee: e };
