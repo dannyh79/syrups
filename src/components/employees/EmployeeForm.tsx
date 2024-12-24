@@ -146,6 +146,22 @@ const EmployeeForm = ({
         )}
       </div>
       <div>
+        <Label className={cn('mb-2 inline-block', errors?.firstName ? 'text-destructive' : '')}>
+          Email
+        </Label>
+        <Input
+          type="text"
+          name="email"
+          className={cn(errors?.email ? 'ring ring-destructive' : '')}
+          defaultValue={employee?.email ?? ''}
+        />
+        {errors?.firstName ? (
+          <p className="text-xs text-destructive mt-2">{errors.firstName[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
         <Label className={cn('mb-2 inline-block', errors?.role ? 'text-destructive' : '')}>
           Role
         </Label>

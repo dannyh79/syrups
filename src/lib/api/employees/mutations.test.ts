@@ -8,6 +8,7 @@ describe('createEmployee()', () => {
   const employeeParams: NewEmployeeParams = {
     firstName: mockEmployee.firstName,
     lastName: mockEmployee.lastName,
+    email: mockEmployee.email,
     role: mockEmployee.role,
   };
 
@@ -36,6 +37,7 @@ describe('updateEmployee()', () => {
     id: mockEmployee.id,
     firstName: mockEmployee.firstName,
     lastName: mockEmployee.lastName,
+    email: mockEmployee.email,
     role: mockEmployee.role,
   };
 
@@ -84,6 +86,7 @@ const mockEmployee = {
   id: 'cm4zskw1q00002q4jo2vf8p00',
   firstName: 'John',
   lastName: 'Doe',
+  email: 'jdoe@example.com',
   role: '',
   createdAt: new Date('2024-12-22T15:57:39.518Z'),
   updatedAt: new Date('2024-12-22T15:57:39.518Z'),

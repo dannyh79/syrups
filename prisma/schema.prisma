@@ -39,6 +39,7 @@ model Employee {
   id        String  @id @default(cuid())
   lastName  String?
   firstName String
+  email     String  @unique
   role      String?
 
   createdAt DateTime @default(now())
