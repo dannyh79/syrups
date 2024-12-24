@@ -37,13 +37,3 @@ export const updatePerformanceReviewAction = async (
     return handleErrors(e);
   }
 };
-
-export const deletePerformanceReviewAction = async (input: schema.PerformanceReviewId) => {
-  try {
-    const payload = schema.performanceReviewIdSchema.parse({ id: input });
-    await mutations.deletePerformanceReview(payload.id);
-    revalidatePerformanceReviews();
-  } catch (e) {
-    return handleErrors(e);
-  }
-};

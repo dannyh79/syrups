@@ -37,17 +37,3 @@ export const updatePerformanceReview = async (
     throw { error: message };
   }
 };
-
-export const deletePerformanceReview = async (id: schema.PerformanceReviewId) => {
-  const { id: performanceReviewId } = schema.performanceReviewIdSchema.parse({ id });
-  try {
-    const p = await db.performanceReview.delete({
-      where: { id: performanceReviewId },
-    });
-    return { performanceReview: p };
-  } catch (err) {
-    const message = (err as Error).message ?? 'Error, please try again';
-    console.error(message);
-    throw { error: message };
-  }
-};

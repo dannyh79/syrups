@@ -32,7 +32,6 @@ import {
 } from '@/lib/db/schema/performanceReviews';
 import {
   createPerformanceReviewAction,
-  deletePerformanceReviewAction,
   updatePerformanceReviewAction,
 } from '@/lib/actions/performanceReviews';
 import { type Employee, type EmployeeId } from '@/lib/db/schema/employees';
@@ -62,8 +61,7 @@ const PerformanceReviewForm = ({
   const editing = !!performanceReview?.id;
   const [submittedAt, setSubmittedAt] = useState<Date | undefined>(performanceReview?.submittedAt);
 
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [pending, startMutation] = useTransition();
+  const [, startMutation] = useTransition();
 
   const router = useRouter();
   const backpath = useBackPath('performance-reviews');
@@ -253,36 +251,6 @@ const PerformanceReviewForm = ({
 
       {/* Save Button */}
       <SaveButton errors={hasErrors} editing={editing} />
-
-      {/* Delete Button */}
-      {editing ? (
-        <Button
-          type="button"
-          disabled={isDeleting || pending || hasErrors}
-          variant={'destructive'}
-          onClick={() => {
-            setIsDeleting(true);
-            if (closeModal) {
-              closeModal();
-            }
-            startMutation(async () => {
-              if (addOptimistic) {
-                addOptimistic({ action: 'delete', data: performanceReview });
-              }
-              const error = await deletePerformanceReviewAction(performanceReview.id);
-              setIsDeleting(false);
-              const errorFormatted = {
-                error: error ?? 'Error',
-                values: performanceReview,
-              };
-
-              onSuccess('delete', error ? errorFormatted : undefined);
-            });
-          }}
-        >
-          Delet{isDeleting ? 'ing...' : 'e'}
-        </Button>
-      ) : null}
     </form>
   );
 };

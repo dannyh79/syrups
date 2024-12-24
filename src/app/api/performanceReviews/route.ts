@@ -44,21 +44,3 @@ export async function PUT(req: Request) {
     }
   }
 }
-
-export async function DELETE(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-
-    const validatedParams = schema.performanceReviewIdSchema.parse({ id });
-    const { performanceReview } = await mutations.deletePerformanceReview(validatedParams.id);
-
-    return NextResponse.json(performanceReview, { status: 200 });
-  } catch (err) {
-    if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: err.issues }, { status: 400 });
-    } else {
-      return NextResponse.json(err, { status: 500 });
-    }
-  }
-}
