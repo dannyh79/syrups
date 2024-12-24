@@ -40,11 +40,11 @@ export async function signInAction(_: ActionResult, formData: FormData): Promise
     const session = await lucia.createSession(existingUser.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     await setAuthCookie(sessionCookie);
-
-    return redirect('/dashboard');
   } catch {
     return genericError;
   }
+
+  redirect('/dashboard');
 }
 
 export async function signUpAction(_: ActionResult, formData: FormData): Promise<ActionResult> {
@@ -70,7 +70,7 @@ export async function signUpAction(_: ActionResult, formData: FormData): Promise
   const session = await lucia.createSession(userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   await setAuthCookie(sessionCookie);
-  return redirect('/dashboard');
+  redirect('/dashboard');
 }
 
 export async function signOutAction(): Promise<void> {
