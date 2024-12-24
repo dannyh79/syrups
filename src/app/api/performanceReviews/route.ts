@@ -40,7 +40,7 @@ export async function PUT(req: Request) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues }, { status: 400 });
     } else {
-      return NextResponse.json(err, { status: 500 });
+      return NextResponse.json({ error: err }, { status: 500 });
     }
   }
 }
