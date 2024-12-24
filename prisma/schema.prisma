@@ -42,6 +42,23 @@ model Employee {
   email     String  @unique
   role      String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  performanceReviews PerformanceReview[] @relation("EmployeeToPerformanceReview")
+  assignedReviews    PerformanceReview[] @relation("AssigneeToPerformanceReview")
+}
+
+model PerformanceReview {
+  id          String   @id @default(cuid())
+  employee    Employee @relation("EmployeeToPerformanceReview", fields: [employeeId], references: [id])
+  employeeId  String
+  assignee    Employee @relation("AssigneeToPerformanceReview", fields: [assigneeId], references: [id])
+  assigneeId  String
+  submittedAt DateTime
+  feedback    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([assigneeId])
 }

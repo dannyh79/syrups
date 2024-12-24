@@ -21,6 +21,11 @@ export const additionalLinks: AdditionalLinks[] = [
         title: 'Employees',
         icon: Globe,
       },
+      {
+        href: '/performance-reviews',
+        title: 'Performace Reviews',
+        icon: Globe,
+      },
     ],
   },
 ];
