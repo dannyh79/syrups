@@ -3,24 +3,28 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { LucideIcon } from 'lucide-react';
-
 import { cn } from '@/lib/utils';
-import { defaultLinks, additionalLinks } from '@/config/nav';
+import { type LinkItem, defaultLinks, additionalLinks } from '@/config/nav';
 
-export interface SidebarLink {
-  title: string;
-  href: string;
-  icon: LucideIcon;
-}
+export type SidebarItemsProps = {
+  isAdmin: boolean;
+};
 
-const SidebarItems = () => {
+const filterNonAdminLinks = (isAdmin: boolean) => (links: LinkItem[]) =>
+  links.filter((l) => (!isAdmin ? !l.adminOnly : true));
+
+const SidebarItems = ({ isAdmin }: SidebarItemsProps) => {
   return (
     <>
       <SidebarLinkGroup links={defaultLinks} />
       {additionalLinks.length > 0
         ? additionalLinks.map((l) => (
-            <SidebarLinkGroup links={l.links} title={l.title} border key={l.title} />
+            <SidebarLinkGroup
+              links={filterNonAdminLinks(isAdmin)(l.links)}
+              title={l.title}
+              border
+              key={l.title}
+            />
           ))
         : null}
     </>
@@ -33,7 +37,7 @@ const SidebarLinkGroup = ({
   title,
   border,
 }: {
-  links: SidebarLink[];
+  links: LinkItem[];
   title?: string;
   border?: boolean;
 }) => {
@@ -57,7 +61,8 @@ const SidebarLinkGroup = ({
     </div>
   );
 };
-const SidebarLink = ({ link, active }: { link: SidebarLink; active: boolean }) => {
+
+const SidebarLink = ({ link, active }: { link: LinkItem; active: boolean }) => {
   return (
     <Link
       href={link.href}
