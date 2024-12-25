@@ -4,7 +4,7 @@ import Loading from '@/app/loading';
 import PerformanceReviewList from '@/components/performanceReviews/PerformanceReviewList';
 import { getPerformanceReviews } from '@/lib/api/performanceReviews/queries';
 import { getEmployees } from '@/lib/api/employees/queries';
-import { checkAuth } from '@/lib/auth/utils';
+import { checkAuth, getUserAuth } from '@/lib/auth/utils';
 
 export const revalidate = 0;
 
@@ -24,7 +24,12 @@ export default async function PerformanceReviewsPage() {
 const PerformanceReviews = async () => {
   await checkAuth();
 
-  const { performanceReviews } = await getPerformanceReviews({});
+  const { session } = await getUserAuth();
+  const user = session!.user;
+  const { performanceReviews } = await getPerformanceReviews(
+    user.role === 'admin' ? {} : { assignee: { email: user.email }, submittedAt: null },
+  );
+
   const { employees } = await getEmployees();
   return (
     <Suspense fallback={<Loading />}>
