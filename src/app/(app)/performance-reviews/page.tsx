@@ -24,7 +24,7 @@ export default async function PerformanceReviewsPage() {
 const PerformanceReviews = async () => {
   await checkAuth();
 
-  const { performanceReviews } = await getPerformanceReviews();
+  const { performanceReviews } = await getPerformanceReviews({});
   const { employees } = await getEmployees();
   return (
     <Suspense fallback={<Loading />}>

@@ -1,10 +1,10 @@
+import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
+import { type Session, type User, Lucia } from 'lucia';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 
-import { type Session, type User, Lucia } from 'lucia';
 import { db } from '@/lib/db/index';
-
-import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
+import * as domain from '@/lib/domains';
 
 const adapter = new PrismaAdapter(db.session, db.user);
 
@@ -20,6 +20,7 @@ export const lucia = new Lucia(adapter, {
       // attributes has the type of DatabaseUserAttributes
       email: attributes.email,
       name: attributes.name,
+      role: attributes.role,
     };
   },
 });
@@ -34,6 +35,7 @@ declare module 'lucia' {
 interface DatabaseUserAttributes {
   email: string;
   name: string;
+  role: domain.Role;
 }
 
 export const validateRequest = cache(

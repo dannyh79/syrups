@@ -25,6 +25,7 @@ model User {
   email          String    @unique
   hashedPassword String
   name           String?
+  role           String?
   sessions       Session[]
 }
 

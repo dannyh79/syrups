@@ -11,6 +11,7 @@ export const authenticationSchema = z.object({
 export const updateUserSchema = z.object({
   name: z.string().min(3).optional(),
   email: z.string().min(4).optional(),
+  role: z.enum(['default', 'admin']).optional(),
 });
 
 export type UsernameAndPassword = z.infer<typeof authenticationSchema>;

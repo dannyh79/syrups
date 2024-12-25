@@ -95,13 +95,15 @@ export async function updateUser(
 
   const name = formData.get('name') ?? undefined;
   const email = formData.get('email') ?? undefined;
+  const role = formData.get('role') ?? undefined;
 
-  const result = updateUserSchema.safeParse({ name, email });
+  const result = updateUserSchema.safeParse({ name, email, role });
 
   if (!result.success) {
     const error = result.error.flatten().fieldErrors;
     if (error.name) return { error: 'Invalid name - ' + error.name[0] };
     if (error.email) return { error: 'Invalid email - ' + error.email[0] };
+    if (error.role) return { error: 'Invalid role - ' + error.role[0] };
     return genericError;
   }
 

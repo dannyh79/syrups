@@ -6,6 +6,7 @@ export const userSchema = z.object({
   email: z.string(),
   hashedPassword: z.string(),
   name: z.string().nullish(),
+  role: z.string().nullish(),
 });
 
 export interface CompleteUser extends z.infer<typeof userSchema> {
