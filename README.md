@@ -21,8 +21,8 @@ pnpm install
 pnpm run db:generate
 pnpm run db:push
 
-# Start dev server
-pnpm start
+# Start server
+pnpm build & pnpm start
 
 # Testing
 pnpm test
