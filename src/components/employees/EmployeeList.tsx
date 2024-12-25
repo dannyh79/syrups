@@ -1,24 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { PlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import * as React from 'react';
 
-import { cn } from '@/lib/utils';
 import { type Employee, CompleteEmployee } from '@/lib/db/schema/employees';
-import Modal from '@/components/shared/Modal';
 
 import { useOptimisticEmployees } from '@/app/(app)/employees/useOptimisticEmployees';
+
 import { Button } from '@/components/ui/button';
+import DataTable, { ColumnDef } from '@/components/shared/DataTable';
+import Modal from '@/components/shared/Modal';
+
 import EmployeeForm from './EmployeeForm';
-import { PlusIcon } from 'lucide-react';
 
 type TOpenModal = (employee?: Employee) => void;
 
 export default function EmployeeList({ employees }: { employees: CompleteEmployee[] }) {
   const { optimisticEmployees, addOptimisticEmployee } = useOptimisticEmployees(employees);
-  const [open, setOpen] = useState(false);
-  const [activeEmployee, setActiveEmployee] = useState<Employee | null>(null);
+  const [open, setOpen] = React.useState(false);
+  const [activeEmployee, setActiveEmployee] = React.useState<Employee | null>(null);
   const openModal = (employee?: Employee) => {
     setOpen(true);
     return employee ? setActiveEmployee(employee) : setActiveEmployee(null);
@@ -47,40 +49,35 @@ export default function EmployeeList({ employees }: { employees: CompleteEmploye
       {optimisticEmployees.length === 0 ? (
         <EmptyState openModal={openModal} />
       ) : (
-        <ul>
-          {optimisticEmployees.map((employee) => (
-            <Employee employee={employee} key={employee.id} />
-          ))}
-        </ul>
+        <EmployeeDataTable data={optimisticEmployees} />
       )}
     </div>
   );
 }
 
-const Employee = ({ employee }: { employee: CompleteEmployee }) => {
-  const optimistic = employee.id === 'optimistic';
-  const deleting = employee.id === 'delete';
-  const mutating = optimistic || deleting;
+function EmployeeDataTable({ data }: { data: CompleteEmployee[] }) {
   const pathname = usePathname();
   const basePath = pathname.includes('employees') ? pathname : pathname + '/employees/';
-
-  return (
-    <li
-      className={cn(
-        'flex justify-between my-2',
-        mutating ? 'opacity-30 animate-pulse' : '',
-        deleting ? 'text-destructive' : '',
-      )}
-    >
-      <div className="w-full">
-        <div>{employee.lastName}</div>
-      </div>
-      <Button variant={'link'} asChild>
-        <Link href={basePath + '/' + employee.id}>Edit</Link>
-      </Button>
-    </li>
+  const columns = React.useMemo<ColumnDef<Employee>[]>(
+    () => [
+      { accessorKey: 'lastName', header: 'Last Name' },
+      { accessorKey: 'firstName', header: 'First Name' },
+      { accessorKey: 'email', header: 'Email' },
+      {
+        id: 'actions',
+        header: 'Actions',
+        cell: ({ row }) => (
+          <Button variant={'link'} asChild>
+            <Link href={basePath + '/' + row.original.id}>View</Link>
+          </Button>
+        ),
+      },
+    ],
+    [basePath],
   );
-};
+
+  return <DataTable columns={columns} data={data} />;
+}
 
 const EmptyState = ({ openModal }: { openModal: TOpenModal }) => {
   return (

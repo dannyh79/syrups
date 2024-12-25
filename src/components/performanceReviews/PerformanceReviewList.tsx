@@ -1,20 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { PlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { type Employee, type EmployeeId } from '@/lib/db/schema/employees';
 import {
   type PerformanceReview,
   CompletePerformanceReview,
 } from '@/lib/db/schema/performanceReviews';
-import Modal from '@/components/shared/Modal';
-import { type Employee, type EmployeeId } from '@/lib/db/schema/employees';
+
 import { useOptimisticPerformanceReviews } from '@/app/(app)/performance-reviews/useOptimisticPerformanceReviews';
+
 import { Button } from '@/components/ui/button';
+import DataTable, { ColumnDef } from '@/components/shared/DataTable';
+import Modal from '@/components/shared/Modal';
+
 import PerformanceReviewForm from './PerformanceReviewForm';
-import { PlusIcon } from 'lucide-react';
 
 type TOpenModal = (performanceReview?: PerformanceReview) => void;
 
@@ -31,10 +34,9 @@ export default function PerformanceReviewList({
 }) {
   const { optimisticPerformanceReviews, addOptimisticPerformanceReview } =
     useOptimisticPerformanceReviews(performanceReviews, employees);
-  const [open, setOpen] = useState(false);
-  const [activePerformanceReview, setActivePerformanceReview] = useState<PerformanceReview | null>(
-    null,
-  );
+  const [open, setOpen] = React.useState(false);
+  const [activePerformanceReview, setActivePerformanceReview] =
+    React.useState<PerformanceReview | null>(null);
   const openModal = (performanceReview?: PerformanceReview) => {
     setOpen(true);
     return performanceReview
@@ -68,46 +70,66 @@ export default function PerformanceReviewList({
       {optimisticPerformanceReviews.length === 0 ? (
         <EmptyState openModal={openModal} />
       ) : (
-        <ul>
-          {optimisticPerformanceReviews.map((performanceReview) => (
-            <PerformanceReview performanceReview={performanceReview} key={performanceReview.id} />
-          ))}
-        </ul>
+        <PerformanceReviewDataTable data={optimisticPerformanceReviews} employees={employees} />
       )}
     </div>
   );
 }
 
-const PerformanceReview = ({
-  performanceReview,
+const toFullName = (e?: Employee) =>
+  e?.lastName ? [e.lastName, e.firstName].join(', ') : e?.firstName;
+
+const toDateTime = (t: Date | null | undefined, placeholder = 'N/A') =>
+  t
+    ? Intl.DateTimeFormat('en', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      }).format(t)
+    : placeholder;
+
+function PerformanceReviewDataTable({
+  data,
+  employees,
 }: {
-  performanceReview: CompletePerformanceReview;
-}) => {
-  const optimistic = performanceReview.id === 'optimistic';
-  const deleting = performanceReview.id === 'delete';
-  const mutating = optimistic || deleting;
+  data: CompletePerformanceReview[];
+  employees: Employee[];
+}) {
   const pathname = usePathname();
   const basePath = pathname.includes('performance-reviews')
     ? pathname
     : pathname + '/performance-reviews/';
+  const columns = React.useMemo<ColumnDef<PerformanceReview>[]>(() => {
+    const employeeMap = new Map(employees.map((e) => [e.id, e]));
+    return [
+      {
+        accessorKey: 'employeeId',
+        header: 'Employee',
+        cell: ({ row }) => toFullName(employeeMap.get(row.original.employeeId)),
+      },
+      {
+        accessorKey: 'assigneeId',
+        header: 'Assignee',
+        cell: ({ row }) => toFullName(employeeMap.get(row.original.assigneeId)),
+      },
+      {
+        accessorKey: 'submittedAt',
+        header: 'Submitted At',
+        cell: ({ row }) => toDateTime(row.original.submittedAt),
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        cell: ({ row }) => (
+          <Button variant={'link'} asChild>
+            <Link href={basePath + '/' + row.original.id}>View</Link>
+          </Button>
+        ),
+      },
+    ];
+  }, [basePath, employees]);
 
-  return (
-    <li
-      className={cn(
-        'flex justify-between my-2',
-        mutating ? 'opacity-30 animate-pulse' : '',
-        deleting ? 'text-destructive' : '',
-      )}
-    >
-      <div className="w-full">
-        <div>{performanceReview.employeeId}</div>
-      </div>
-      <Button variant={'link'} asChild>
-        <Link href={basePath + '/' + performanceReview.id}>Edit</Link>
-      </Button>
-    </li>
-  );
-};
+  return <DataTable columns={columns} data={data} />;
+}
 
 const EmptyState = ({ openModal }: { openModal: TOpenModal }) => {
   return (
