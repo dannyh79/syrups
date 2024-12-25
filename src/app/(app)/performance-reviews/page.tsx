@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 
 import Loading from '@/app/loading';
 import PerformanceReviewList from '@/components/performanceReviews/PerformanceReviewList';
-import { getPerformanceReviews } from '@/lib/api/performanceReviews/queries';
+import { byRequiringCompletion, getPerformanceReviews } from '@/lib/api/performanceReviews/queries';
 import { getEmployees } from '@/lib/api/employees/queries';
 import { checkAuth, getUserAuth } from '@/lib/auth/utils';
 
@@ -28,7 +28,7 @@ const PerformanceReviews = async () => {
   const user = session!.user;
   const isAdmin = user.role === 'admin';
   const { performanceReviews } = await getPerformanceReviews(
-    isAdmin ? {} : { assignee: { email: user.email }, submittedAt: null },
+    isAdmin ? {} : byRequiringCompletion(user),
   );
 
   const { employees } = await getEmployees();

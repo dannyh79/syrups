@@ -13,6 +13,11 @@ export const getPerformanceReviews = async (args?: GetPerformanceReviewsArgs) =>
   return { performanceReviews: p };
 };
 
+export const byRequiringCompletion = ({ email }: { email: string }): GetPerformanceReviewsArgs => ({
+  assignee: { email },
+  submittedAt: null,
+});
+
 export const getPerformanceReviewById = async (id: schema.PerformanceReviewId) => {
   const { id: performanceReviewId } = schema.performanceReviewIdSchema.parse({ id });
   const p = await db.performanceReview.findFirst({
