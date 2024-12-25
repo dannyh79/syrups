@@ -11,7 +11,6 @@ export const insertPerformanceReviewParams = baseSchema
   .extend({
     employeeId: z.coerce.string().min(1),
     assigneeId: z.coerce.string().min(1),
-    submittedAt: z.coerce.date(),
   })
   .omit({
     id: true,

@@ -37,6 +37,8 @@ export const useOptimisticPerformanceReviews = (
 
       const optimisticPerformanceReview = {
         ...data,
+        submittedAt: data.submittedAt ?? null,
+        feedback: data.feedback ?? null,
         employee: optimisticEmployee,
         assignee: optimisticAssignee,
         id: 'optimistic',

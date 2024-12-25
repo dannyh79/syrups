@@ -5,8 +5,8 @@ export const performanceReviewSchema = z.object({
   id: z.string(),
   employeeId: z.string(),
   assigneeId: z.string(),
-  submittedAt: z.date(),
-  feedback: z.string(),
+  submittedAt: z.date().nullish(),
+  feedback: z.string().nullish(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

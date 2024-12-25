@@ -49,15 +49,15 @@ model Employee {
 }
 
 model PerformanceReview {
-  id          String   @id @default(cuid())
-  employee    Employee @relation("EmployeeToPerformanceReview", fields: [employeeId], references: [id])
+  id          String    @id @default(cuid())
+  employee    Employee  @relation("EmployeeToPerformanceReview", fields: [employeeId], references: [id])
   employeeId  String
-  assignee    Employee @relation("AssigneeToPerformanceReview", fields: [assigneeId], references: [id])
+  assignee    Employee  @relation("AssigneeToPerformanceReview", fields: [assigneeId], references: [id])
   assigneeId  String
-  submittedAt DateTime
-  feedback    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  submittedAt DateTime?
+  feedback    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([employeeId])
   @@index([assigneeId])

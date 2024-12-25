@@ -28,7 +28,9 @@ import { format } from 'date-fns';
 
 import {
   type PerformanceReview,
+  UpdatePerformanceReviewParams,
   insertPerformanceReviewParams,
+  updatePerformanceReviewParams,
 } from '@/lib/db/schema/performanceReviews';
 import {
   createPerformanceReviewAction,
@@ -36,16 +38,7 @@ import {
 } from '@/lib/actions/performanceReviews';
 import { type Employee, type EmployeeId } from '@/lib/db/schema/employees';
 
-const PerformanceReviewForm = ({
-  employees,
-  employeeId,
-  assigneeId,
-  performanceReview,
-  openModal,
-  closeModal,
-  addOptimistic,
-  postSuccess,
-}: {
+export type PerformanceReviewFormProps = {
   performanceReview?: PerformanceReview | null;
   employees: Employee[];
   employeeId?: EmployeeId;
@@ -54,12 +47,27 @@ const PerformanceReviewForm = ({
   closeModal?: () => void;
   addOptimistic?: TAddOptimistic;
   postSuccess?: () => void;
-}) => {
+};
+
+const PerformanceReviewForm = (props: PerformanceReviewFormProps) => {
+  const {
+    employees,
+    employeeId,
+    assigneeId,
+    performanceReview,
+    openModal,
+    closeModal,
+    addOptimistic,
+    postSuccess,
+  } = props;
+
   const { errors, hasErrors, setErrors, handleChange } = useValidatedForm<PerformanceReview>(
     insertPerformanceReviewParams,
   );
   const editing = !!performanceReview?.id;
-  const [submittedAt, setSubmittedAt] = useState<Date | undefined>(performanceReview?.submittedAt);
+  const [submittedAt, setSubmittedAt] = useState<Date | undefined>(
+    performanceReview?.submittedAt ?? undefined,
+  );
 
   const [, startMutation] = useTransition();
 
@@ -89,7 +97,9 @@ const PerformanceReviewForm = ({
     setErrors(null);
 
     const payload = Object.fromEntries(data.entries());
-    const performanceReviewParsed = await insertPerformanceReviewParams.safeParseAsync({
+    const performanceReviewParsed = await (
+      editing ? updatePerformanceReviewParams : insertPerformanceReviewParams
+    ).safeParseAsync({
       employeeId,
       assigneeId,
       ...payload,
@@ -119,7 +129,10 @@ const PerformanceReviewForm = ({
         }
 
         const error = editing
-          ? await updatePerformanceReviewAction({ ...values, id: performanceReview.id })
+          ? await updatePerformanceReviewAction({
+              ...(values as UpdatePerformanceReviewParams),
+              id: performanceReview.id,
+            })
           : await createPerformanceReviewAction(values);
 
         const errorFormatted = {
@@ -190,63 +203,74 @@ const PerformanceReviewForm = ({
           )}
         </div>
       )}
-      <div>
-        <Label className={cn('mb-2 inline-block', errors?.submittedAt ? 'text-destructive' : '')}>
-          Submitted At
-        </Label>
-        <br />
-        <Popover>
-          <Input
-            name="submittedAt"
-            onChange={() => {}}
-            readOnly
-            value={submittedAt?.toUTCString() ?? new Date().toUTCString()}
-            className="hidden"
-          />
-
-          <PopoverTrigger asChild>
-            <Button
-              variant={'outline'}
-              className={cn(
-                'w-[240px] pl-3 text-left font-normal',
-                !performanceReview?.submittedAt && 'text-muted-foreground',
-              )}
+      {editing && (
+        <>
+          <Input name="id" readOnly value={performanceReview.id} className="hidden" />
+          <div>
+            <Label
+              className={cn('mb-2 inline-block', errors?.submittedAt ? 'text-destructive' : '')}
             >
-              {submittedAt ? <span>{format(submittedAt, 'PPP')}</span> : <span>Pick a date</span>}
-              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              onSelect={(e) => setSubmittedAt(e)}
-              selected={submittedAt}
-              disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+              Submitted At
+            </Label>
+            <br />
+            <Popover>
+              <Input
+                name="submittedAt"
+                onChange={() => {}}
+                readOnly
+                value={submittedAt?.toUTCString()}
+                className="hidden"
+              />
+
+              <PopoverTrigger asChild>
+                <Button
+                  variant={'outline'}
+                  className={cn(
+                    'w-[240px] pl-3 text-left font-normal',
+                    !performanceReview?.submittedAt && 'text-muted-foreground',
+                  )}
+                >
+                  {submittedAt ? (
+                    <span>{format(submittedAt, 'PPP')}</span>
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  onSelect={(e) => setSubmittedAt(e)}
+                  selected={submittedAt}
+                  disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                />
+              </PopoverContent>
+            </Popover>
+            {errors?.submittedAt ? (
+              <p className="text-xs text-destructive mt-2">{errors.submittedAt[0]}</p>
+            ) : (
+              <div className="h-6" />
+            )}
+          </div>
+          <div>
+            <Label className={cn('mb-2 inline-block', errors?.feedback ? 'text-destructive' : '')}>
+              Feedback
+            </Label>
+            <Input
+              type="text"
+              name="feedback"
+              className={cn(errors?.feedback ? 'ring ring-destructive' : '')}
+              defaultValue={performanceReview?.feedback ?? ''}
             />
-          </PopoverContent>
-        </Popover>
-        {errors?.submittedAt ? (
-          <p className="text-xs text-destructive mt-2">{errors.submittedAt[0]}</p>
-        ) : (
-          <div className="h-6" />
-        )}
-      </div>
-      <div>
-        <Label className={cn('mb-2 inline-block', errors?.feedback ? 'text-destructive' : '')}>
-          Feedback
-        </Label>
-        <Input
-          type="text"
-          name="feedback"
-          className={cn(errors?.feedback ? 'ring ring-destructive' : '')}
-          defaultValue={performanceReview?.feedback ?? ''}
-        />
-        {errors?.feedback ? (
-          <p className="text-xs text-destructive mt-2">{errors.feedback[0]}</p>
-        ) : (
-          <div className="h-6" />
-        )}
-      </div>
+            {errors?.feedback ? (
+              <p className="text-xs text-destructive mt-2">{errors.feedback[0]}</p>
+            ) : (
+              <div className="h-6" />
+            )}
+          </div>
+        </>
+      )}
       {/* Schema fields end */}
 
       {/* Save Button */}
