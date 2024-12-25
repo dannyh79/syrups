@@ -1,9 +1,14 @@
 import { db } from '@/lib/db/index';
 import * as schema from '@/lib/db/schema/performanceReviews';
 
-export const getPerformanceReviews = async () => {
+export type GetPerformanceReviewsArgs = NonNullable<
+  Parameters<typeof db.performanceReview.findMany>[0]
+>['where'];
+
+export const getPerformanceReviews = async (args?: GetPerformanceReviewsArgs) => {
   const p = await db.performanceReview.findMany({
     include: { employee: true, assignee: true },
+    ...(args && { where: args }),
   });
   return { performanceReviews: p };
 };
