@@ -150,136 +150,113 @@ const PerformanceReviewForm = (props: PerformanceReviewFormProps) => {
     }
   };
 
+  if (!editing) {
+    return (
+      <form action={handleSubmit} onChange={handleChange} className="space-y-8">
+        <EmployeeSelect field="employeeId" employees={employees} errors={errors} />
+        <EmployeeSelect field="assigneeId" employees={employees} errors={errors} />
+        <SaveButton errors={hasErrors} editing={false} />
+      </form>
+    );
+  }
+
   return (
-    <form action={handleSubmit} onChange={handleChange} className={'space-y-8'}>
-      {/* Schema fields start */}
+    <form action={handleSubmit} onChange={handleChange} className="space-y-8">
+      <Input name="id" readOnly value={performanceReview.id} className="hidden" />
+      <div>
+        <Label className={cn('mb-2 inline-block', errors?.submittedAt ? 'text-destructive' : '')}>
+          Submitted At
+        </Label>
+        <br />
+        <Popover>
+          <Input
+            name="submittedAt"
+            onChange={() => {}}
+            readOnly
+            value={submittedAt?.toUTCString()}
+            className="hidden"
+          />
 
-      {employeeId ? null : (
-        <div>
-          <Label className={cn('mb-2 inline-block', errors?.employeeId ? 'text-destructive' : '')}>
-            Employee
-          </Label>
-          <Select defaultValue={performanceReview?.employeeId} name="employeeId">
-            <SelectTrigger className={cn(errors?.employeeId ? 'ring ring-destructive' : '')}>
-              <SelectValue placeholder="Select a employee" />
-            </SelectTrigger>
-            <SelectContent>
-              {employees.map((employee) => (
-                <SelectItem key={employee.id} value={employee.id.toString()}>
-                  {domain.toFullName(employee)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors?.employeeId ? (
-            <p className="text-xs text-destructive mt-2">{errors.employeeId[0]}</p>
-          ) : (
-            <div className="h-6" />
-          )}
-        </div>
-      )}
-
-      {assigneeId ? null : (
-        <div>
-          <Label className={cn('mb-2 inline-block', errors?.employeeId ? 'text-destructive' : '')}>
-            Assignee
-          </Label>
-          <Select defaultValue={performanceReview?.assigneeId} name="assigneeId">
-            <SelectTrigger className={cn(errors?.assigneeId ? 'ring ring-destructive' : '')}>
-              <SelectValue placeholder="Select an employee" />
-            </SelectTrigger>
-            <SelectContent>
-              {employees.map((employee) => (
-                <SelectItem key={employee.id} value={employee.id.toString()}>
-                  {domain.toFullName(employee)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors?.assigneeId ? (
-            <p className="text-xs text-destructive mt-2">{errors.assigneeId[0]}</p>
-          ) : (
-            <div className="h-6" />
-          )}
-        </div>
-      )}
-      {editing && (
-        <>
-          <Input name="id" readOnly value={performanceReview.id} className="hidden" />
-          <div>
-            <Label
-              className={cn('mb-2 inline-block', errors?.submittedAt ? 'text-destructive' : '')}
+          <PopoverTrigger asChild>
+            <Button
+              variant={'outline'}
+              className={cn(
+                'w-[240px] pl-3 text-left font-normal',
+                !performanceReview?.submittedAt && 'text-muted-foreground',
+              )}
             >
-              Submitted At
-            </Label>
-            <br />
-            <Popover>
-              <Input
-                name="submittedAt"
-                onChange={() => {}}
-                readOnly
-                value={submittedAt?.toUTCString()}
-                className="hidden"
-              />
-
-              <PopoverTrigger asChild>
-                <Button
-                  variant={'outline'}
-                  className={cn(
-                    'w-[240px] pl-3 text-left font-normal',
-                    !performanceReview?.submittedAt && 'text-muted-foreground',
-                  )}
-                >
-                  {submittedAt ? (
-                    <span>{format(submittedAt, 'PPP')}</span>
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  onSelect={(e) => setSubmittedAt(e)}
-                  selected={submittedAt}
-                  disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                />
-              </PopoverContent>
-            </Popover>
-            {errors?.submittedAt ? (
-              <p className="text-xs text-destructive mt-2">{errors.submittedAt[0]}</p>
-            ) : (
-              <div className="h-6" />
-            )}
-          </div>
-          <div>
-            <Label className={cn('mb-2 inline-block', errors?.feedback ? 'text-destructive' : '')}>
-              Feedback
-            </Label>
-            <Input
-              type="text"
-              name="feedback"
-              className={cn(errors?.feedback ? 'ring ring-destructive' : '')}
-              defaultValue={performanceReview?.feedback ?? ''}
+              {submittedAt ? <span>{format(submittedAt, 'PPP')}</span> : <span>Pick a date</span>}
+              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              onSelect={(e) => setSubmittedAt(e)}
+              selected={submittedAt}
+              disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
             />
-            {errors?.feedback ? (
-              <p className="text-xs text-destructive mt-2">{errors.feedback[0]}</p>
-            ) : (
-              <div className="h-6" />
-            )}
-          </div>
-        </>
-      )}
-      {/* Schema fields end */}
+          </PopoverContent>
+        </Popover>
+        {errors?.submittedAt ? (
+          <p className="text-xs text-destructive mt-2">{errors.submittedAt[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
+        <Label className={cn('mb-2 inline-block', errors?.feedback ? 'text-destructive' : '')}>
+          Feedback
+        </Label>
+        <Input
+          type="text"
+          name="feedback"
+          className={cn(errors?.feedback ? 'ring ring-destructive' : '')}
+          defaultValue={performanceReview?.feedback ?? ''}
+        />
+        {errors?.feedback ? (
+          <p className="text-xs text-destructive mt-2">{errors.feedback[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
 
-      {/* Save Button */}
-      <SaveButton errors={hasErrors} editing={editing} />
+      <SaveButton errors={hasErrors} editing={true} />
     </form>
   );
 };
 
 export default PerformanceReviewForm;
+
+type EmployeeSelectProps = Pick<PerformanceReviewFormProps, 'performanceReview' | 'employees'> & {
+  field: 'employeeId' | 'assigneeId';
+  errors: ReturnType<typeof useValidatedForm<PerformanceReview>>['errors'];
+};
+
+const EmployeeSelect = ({ field, performanceReview, employees, errors }: EmployeeSelectProps) => (
+  <div>
+    <Label className={cn('mb-2 inline-block', errors?.[field] ? 'text-destructive' : '')}>
+      {field === 'employeeId' ? 'Employee' : 'Assignee'}
+    </Label>
+    <Select defaultValue={performanceReview?.[field]} name={field}>
+      <SelectTrigger className={cn(errors?.[field] ? 'ring ring-destructive' : '')}>
+        <SelectValue placeholder="Select an employee" />
+      </SelectTrigger>
+      <SelectContent>
+        {employees.map((employee) => (
+          <SelectItem key={employee.id} value={employee.id.toString()}>
+            {domain.toFullName(employee)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+    {errors?.[field] ? (
+      <p className="text-xs text-destructive mt-2">{errors[field][0]}</p>
+    ) : (
+      <div className="h-6" />
+    )}
+  </div>
+);
 
 const SaveButton = ({ editing, errors }: { editing: boolean; errors: boolean }) => {
   const { pending } = useFormStatus();
