@@ -4,6 +4,7 @@ import { useOptimistic, useState } from 'react';
 import { TAddOptimistic } from '@/app/(app)/employees/useOptimisticEmployees';
 import { type Employee } from '@/lib/db/schema/employees';
 import { cn } from '@/lib/utils';
+import * as domain from '@/lib/domains';
 
 import { Button } from '@/components/ui/button';
 import Modal from '@/components/shared/Modal';
@@ -29,11 +30,14 @@ export default function OptimisticEmployee({ employee }: { employee: Employee })
         />
       </Modal>
       <div className="flex justify-between items-end mb-4">
-        <h1 className="font-semibold text-2xl">{optimisticEmployee.lastName}</h1>
+        <h1 className="font-semibold text-2xl">
+          Employee: {domain.toFullName(optimisticEmployee)}
+        </h1>
         <Button className="" onClick={() => setOpen(true)}>
           Edit
         </Button>
       </div>
+      <div className="mb-4 italic">View not implemented.</div>
       <pre
         className={cn(
           'bg-secondary p-4 rounded-lg break-all text-wrap',

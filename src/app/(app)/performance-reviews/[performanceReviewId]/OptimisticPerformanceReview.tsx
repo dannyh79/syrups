@@ -44,11 +44,14 @@ export default function OptimisticPerformanceReview({
         />
       </Modal>
       <div className="flex justify-between items-end mb-4">
-        <h1 className="font-semibold text-2xl">{optimisticPerformanceReview.employeeId}</h1>
+        <h1 className="font-semibold text-2xl">
+          Performance Review: {optimisticPerformanceReview.employeeId}
+        </h1>
         <Button className="" onClick={() => setOpen(true)}>
           Edit
         </Button>
       </div>
+      <div className="mb-4 italic">View not implemented.</div>
       <pre
         className={cn(
           'bg-secondary p-4 rounded-lg break-all text-wrap',
