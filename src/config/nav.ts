@@ -26,6 +26,7 @@ export const additionalLinks: AdditionalLinks[] = [
         href: '/employees',
         title: 'Employees',
         icon: Globe,
+        adminOnly: true,
       },
       {
         href: '/performance-reviews',
