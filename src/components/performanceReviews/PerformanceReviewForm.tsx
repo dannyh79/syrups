@@ -1,19 +1,23 @@
 import { z } from 'zod';
 
+import { CalendarIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useValidatedForm } from '@/lib/hooks/useValidatedForm';
+
+import * as domain from '@/lib/domains/';
 
 import { type Action, cn } from '@/lib/utils';
+
+import { useValidatedForm } from '@/lib/hooks/useValidatedForm';
 import { type TAddOptimistic } from '@/app/(app)/performance-reviews/useOptimisticPerformanceReviews';
 
+import { useBackPath } from '@/components/shared/BackButton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { useBackPath } from '@/components/shared/BackButton';
-
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -21,8 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 
@@ -164,8 +166,7 @@ const PerformanceReviewForm = (props: PerformanceReviewFormProps) => {
             <SelectContent>
               {employees.map((employee) => (
                 <SelectItem key={employee.id} value={employee.id.toString()}>
-                  {employee.id}
-                  {/* TODO: Replace with a field from the employee model */}
+                  {domain.toFullName(employee)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -185,13 +186,12 @@ const PerformanceReviewForm = (props: PerformanceReviewFormProps) => {
           </Label>
           <Select defaultValue={performanceReview?.assigneeId} name="assigneeId">
             <SelectTrigger className={cn(errors?.assigneeId ? 'ring ring-destructive' : '')}>
-              <SelectValue placeholder="Select an assignee" />
+              <SelectValue placeholder="Select an employee" />
             </SelectTrigger>
             <SelectContent>
               {employees.map((employee) => (
                 <SelectItem key={employee.id} value={employee.id.toString()}>
-                  {employee.id}
-                  {/* TODO: Replace with a field from the assignee model */}
+                  {domain.toFullName(employee)}
                 </SelectItem>
               ))}
             </SelectContent>

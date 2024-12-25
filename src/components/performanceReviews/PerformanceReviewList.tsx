@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 
+import * as domain from '@/lib/domains/';
+
 import { type Employee, type EmployeeId } from '@/lib/db/schema/employees';
 import {
   type PerformanceReview,
@@ -76,9 +78,6 @@ export default function PerformanceReviewList({
   );
 }
 
-const toFullName = (e?: Employee) =>
-  e?.lastName ? [e.lastName, e.firstName].join(', ') : e?.firstName;
-
 const toDateTime = (t: Date | null | undefined, placeholder = 'N/A') =>
   t
     ? Intl.DateTimeFormat('en', {
@@ -104,12 +103,12 @@ function PerformanceReviewDataTable({
       {
         accessorKey: 'employeeId',
         header: 'Employee',
-        cell: ({ row }) => toFullName(employeeMap.get(row.original.employeeId)),
+        cell: ({ row }) => domain.toFullName(employeeMap.get(row.original.employeeId)),
       },
       {
         accessorKey: 'assigneeId',
         header: 'Assignee',
-        cell: ({ row }) => toFullName(employeeMap.get(row.original.assigneeId)),
+        cell: ({ row }) => domain.toFullName(employeeMap.get(row.original.assigneeId)),
       },
       {
         accessorKey: 'submittedAt',
