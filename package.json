@@ -2,6 +2,7 @@
   "name": "syrups",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "format": "prettier -w --log-level warn",
     "format:all": "prettier -w --log-level warn .",
