@@ -26,14 +26,19 @@ const PerformanceReviews = async () => {
 
   const { session } = await getUserAuth();
   const user = session!.user;
+  const isAdmin = user.role === 'admin';
   const { performanceReviews } = await getPerformanceReviews(
-    user.role === 'admin' ? {} : { assignee: { email: user.email }, submittedAt: null },
+    isAdmin ? {} : { assignee: { email: user.email }, submittedAt: null },
   );
 
   const { employees } = await getEmployees();
   return (
     <Suspense fallback={<Loading />}>
-      <PerformanceReviewList performanceReviews={performanceReviews} employees={employees} />
+      <PerformanceReviewList
+        performanceReviews={performanceReviews}
+        employees={employees}
+        isAdmin={isAdmin}
+      />
     </Suspense>
   );
 };

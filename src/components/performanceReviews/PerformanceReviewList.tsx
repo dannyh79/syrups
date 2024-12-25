@@ -23,17 +23,21 @@ import PerformanceReviewForm from './PerformanceReviewForm';
 
 type TOpenModal = (performanceReview?: PerformanceReview) => void;
 
-export default function PerformanceReviewList({
-  performanceReviews,
-  employees,
-  employeeId,
-  assigneeId,
-}: {
+export type PerformanceReviewListProps = {
+  isAdmin: boolean;
   performanceReviews: CompletePerformanceReview[];
   employees: Employee[];
   employeeId?: EmployeeId;
   assigneeId?: EmployeeId;
-}) {
+};
+
+export default function PerformanceReviewList({
+  isAdmin,
+  performanceReviews,
+  employees,
+  employeeId,
+  assigneeId,
+}: PerformanceReviewListProps) {
   const { optimisticPerformanceReviews, addOptimisticPerformanceReview } =
     useOptimisticPerformanceReviews(performanceReviews, employees);
   const [open, setOpen] = React.useState(false);
@@ -64,12 +68,14 @@ export default function PerformanceReviewList({
           assigneeId={assigneeId}
         />
       </Modal>
-      <div className="absolute right-0 top-0 ">
-        <Button onClick={() => openModal()} variant={'outline'}>
-          +
-        </Button>
-      </div>
-      {optimisticPerformanceReviews.length === 0 ? (
+      {isAdmin && (
+        <div className="absolute right-0 top-0">
+          <Button onClick={() => openModal()} variant="outline">
+            +
+          </Button>
+        </div>
+      )}
+      {optimisticPerformanceReviews.length === 0 && isAdmin ? (
         <EmptyState openModal={openModal} />
       ) : (
         <PerformanceReviewDataTable data={optimisticPerformanceReviews} employees={employees} />
